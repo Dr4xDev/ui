@@ -642,7 +642,8 @@ MinimizeBtn.Parent = MainWindow.TopBar
         local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
             Size = UDim2.new(0, 100, 0, 30), -- Adjusted size for smaller buttons
             Parent = TabHolder,
-            BackgroundTransparency = 1 -- Ensure the button background is transparent
+            BackgroundTransparency = 0,-- Ensure the button background is transparent
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255), -- Set to white
         }), {
             AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
                 AnchorPoint = Vector2.new(0, 0.5),
