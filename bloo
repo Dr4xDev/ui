@@ -692,19 +692,6 @@ local WindowStuff = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame"
         Size = UDim2.new(0, 10, 1, 0),
         Position = UDim2.new(1, -10, 0, 0)
     }), "Second"), 
-    AddThemeObject(SetProps(MakeElement("Frame"), {
-        Size = UDim2.new(0, 1, 1, 0),
-        Position = UDim2.new(1, -1, 0, 0)
-    }), "Stroke"), 
-    TabHolder,
-    SetChildren(SetProps(MakeElement("TFrame"), {
-        Size = UDim2.new(1, 0, 0, 50),
-        Position = UDim2.new(0, 0, 1, -50)
-    }), {
-        AddThemeObject(SetProps(MakeElement("Frame"), {
-            Size = UDim2.new(1, 0, 0, 1)
-        }), "Stroke")
-    }),
 }), "Second")
 
 -- Removed the Roblox thumbnail, username label, and related UI elements.
