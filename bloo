@@ -155,18 +155,24 @@ function OrionLib:MakeWindow(WindowConfig)
         end
     end
 
-    -- Top Bar for Tabs
-    local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
-        Size = UDim2.new(1, 0, 0, 50), -- Tabs moved to the top
-        Position = UDim2.new(0, 0, 0, 0)
-    }), {
-        MakeElement("List"),
-        MakeElement("Padding", 8, 0, 0, 8)
-    }), "Divider")
+-- Top Bar for Tabs
+local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
+    Size = UDim2.new(1, -150, 1, 0), -- Tabs take up most of the top bar, leaving space for the close and minimize buttons
+    Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left
+    BackgroundTransparency = 1, -- Transparent background for the tab holder
+    ScrollBarThickness = 0 -- Hide the scrollbar for a cleaner look
+}), {
+    MakeElement("List"), -- Use a UIListLayout for tab alignment
+    MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
+}), "Divider")
 
-    AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-        TabHolder.CanvasSize = UDim2.new(0, TabHolder.UIListLayout.AbsoluteContentSize.X + 16, 0, 0)
-    end)
+-- Add the TabHolder to the TopBar
+TabHolder.Parent = MainWindow.TopBar
+
+-- Update the connection to adjust the CanvasSize dynamically
+AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+    TabHolder.CanvasSize = UDim2.new(0, TabHolder.UIListLayout.AbsoluteContentSize.X + 16, 0, 0)
+end)    
 
     local DragPoint = SetProps(MakeElement("TFrame"), {
         Size = UDim2.new(1, 0, 0, 50)
@@ -183,8 +189,8 @@ function OrionLib:MakeWindow(WindowConfig)
             Name = "TopBar"
         }), {
             TabHolder, -- Tabs are now in the top bar
-        }),
-        DragPoint
+		}),
+		DragPoint
     }), "Main")
 
     AddDraggingFunctionality(DragPoint, MainWindow)
@@ -712,12 +718,7 @@ function OrionLib:MakeWindow(WindowConfig)
 			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
 				Size = UDim2.new(0, 70, 0, 30),
 				Position = UDim2.new(1, -90, 0, 10)
-			}), {
-				AddThemeObject(MakeElement("Stroke"), "Stroke"),
-				AddThemeObject(SetProps(MakeElement("Frame"), {
-					Size = UDim2.new(0, 1, 1, 0),
-					Position = UDim2.new(0.5, 0, 0, 0)
-				}), "Stroke"), 
+			}),
 				CloseBtn,
 				MinimizeBtn
 			}), "Second"), 
