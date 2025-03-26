@@ -150,17 +150,19 @@ local function MakeElement(ElementName, ...)
 end
 
 local function SetProps(Element, Props)
-	table.foreach(Props, function(Property, Value)
-		Element[Property] = Value
-	end)
-	return Element
+    if Props then -- Check if Props is not nil
+    for Property, Value in pairs(Props) do
+        Element[Property] = Value
+    end
+    return Element
 end
+end 
 
 local function SetChildren(Element, Children)
-	table.foreach(Children, function(_, Child)
-		Child.Parent = Element
-	end)
-	return Element
+    for _, Child in pairs(Children) do
+        Child.Parent = Element
+    end
+    return Element
 end
 
 local function Round(Number, Factor)
