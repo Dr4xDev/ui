@@ -638,13 +638,14 @@ MinimizeBtn.Parent = MainWindow.TopBar
 		TabConfig.Name = TabConfig.Name or "Tab"
 		TabConfig.Icon = TabConfig.Icon or ""
 		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
-
         local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
             Size = UDim2.new(0, 100, 0, 30), -- Adjusted size for smaller buttons
             Parent = TabHolder,
-            BackgroundTransparency = 0,-- Ensure the button background is transparent
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255), -- Set to white
+            BackgroundTransparency = 0, -- Ensure the button background is visible
+            BackgroundColor3 = Color3.fromRGB(128, 14, 210) -- Set to white
         }), {
+            AddThemeObject(MakeElement("Stroke", Color3.fromRGB(60, 60, 60), 1), "Stroke"), -- Add UIStroke with a gray color
+            AddThemeObject(MakeElement("Corner", 0, 6), "Main"), -- Add UICorner with a corner radius of 6
             AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, 18, 0, 18), -- Icon size
