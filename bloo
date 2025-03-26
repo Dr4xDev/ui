@@ -136,12 +136,14 @@ function OrionLib:MakeWindow(WindowConfig)
     local UIHidden = false
 
     WindowConfig = WindowConfig or {}
-    WindowConfig.Name = nil -- Removed the script name
-    WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or "Config"
+    WindowConfig.Name = WindowConfig.Name or "Orion Library"
+    WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or WindowConfig.Name
     WindowConfig.SaveConfig = WindowConfig.SaveConfig or false
     WindowConfig.HidePremium = WindowConfig.HidePremium or false
-    WindowConfig.IntroEnabled = WindowConfig.IntroEnabled == nil and true or WindowConfig.IntroEnabled
-    WindowConfig.IntroText = WindowConfig.IntroText or ""
+    if WindowConfig.IntroEnabled == nil then
+        WindowConfig.IntroEnabled = true
+    end
+    WindowConfig.IntroText = WindowConfig.IntroText or "Orion Library"
     WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
     WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
     WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
@@ -155,28 +157,60 @@ function OrionLib:MakeWindow(WindowConfig)
         end
     end
 
--- Top Bar for Tabs
-local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
-    Size = UDim2.new(1, -150, 1, 0), -- Tabs take up most of the top bar, leaving space for the close and minimize buttons
-    Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left
-    BackgroundTransparency = 1, -- Transparent background for the tab holder
-    ScrollBarThickness = 0 -- Hide the scrollbar for a cleaner look
-}), {
-    MakeElement("List"), -- Use a UIListLayout for tab alignment
-    MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
-}), "Divider")
+    -- Top Bar for Tabs
+    local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
+        Size = UDim2.new(1, 0, 1, -50),
+        Position = UDim2.new(0, 0, 0, 50),
+        BackgroundTransparency = 1,
+        ScrollBarThickness = 0
+    }), {
+        MakeElement("List"),
+        MakeElement("Padding", 8, 0, 0, 8)
+    }), "Divider")
 
--- Add the TabHolder to the TopBar
-TabHolder.Parent = MainWindow.TopBar
+    AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+        TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y + 16)
+    end)
 
--- Update the connection to adjust the CanvasSize dynamically
-AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-    TabHolder.CanvasSize = UDim2.new(0, TabHolder.UIListLayout.AbsoluteContentSize.X + 16, 0, 0)
-end)    
+    local CloseBtn = SetChildren(SetProps(MakeElement("Button"), {
+        Size = UDim2.new(0.5, 0, 1, 0),
+        Position = UDim2.new(0.5, 0, 0, 0),
+        BackgroundTransparency = 1
+    }), {
+        AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://7072725342"), {
+            Position = UDim2.new(0, 9, 0, 6),
+            Size = UDim2.new(0, 18, 0, 18)
+        }), "Text")
+			})
+		end
+	
+
+    local MinimizeBtn = SetChildren(SetProps(MakeElement("Button"), {
+        Size = UDim2.new(0.5, 0, 1, 0),
+        BackgroundTransparency = 1
+    }), {
+        AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://7072719338"), {
+            Position = UDim2.new(0, 9, 0, 6),
+            Size = UDim2.new(0, 18, 0, 18),
+            Name = "Ico"
+        }), "Text")
+    })
 
     local DragPoint = SetProps(MakeElement("TFrame"), {
         Size = UDim2.new(1, 0, 0, 50)
     })
+
+    local WindowName = AddThemeObject(SetProps(MakeElement("Label", WindowConfig.Name, 14), {
+        Size = UDim2.new(1, -30, 2, 0),
+        Position = UDim2.new(0, 25, 0, -24),
+        Font = Enum.Font.GothamBlack,
+        TextSize = 20
+    }), "Text")
+
+    local WindowTopBarLine = AddThemeObject(SetProps(MakeElement("Frame"), {
+        Size = UDim2.new(1, 0, 0, 1),
+        Position = UDim2.new(0, 0, 1, -1)
+    }), "Stroke")
 
     local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
         Parent = Orion,
@@ -188,12 +222,40 @@ end)
             Size = UDim2.new(1, 0, 0, 50),
             Name = "TopBar"
         }), {
-            TabHolder, -- Tabs are now in the top bar
-		}),
-		DragPoint
-    }), "Main")
+            WindowName,
+            WindowTopBarLine,
+            AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+                Size = UDim2.new(0, 70, 0, 30),
+                Position = UDim2.new(1, -90, 0, 10)
+            }),
+                CloseBtn,
+                MinimizeBtn
+            ), "Second"),
+        }),
+        DragPoint
+	}))
+
+    if WindowConfig.ShowIcon then
+        WindowName.Position = UDim2.new(0, 50, 0, -24)
+        local WindowIcon = SetProps(MakeElement("Image", WindowConfig.Icon), {
+            Size = UDim2.new(0, 20, 0, 20),
+            Position = UDim2.new(0, 25, 0, 15)
+        })
+        WindowIcon.Parent = MainWindow.TopBar
+    end
 
     AddDraggingFunctionality(DragPoint, MainWindow)
+
+    AddConnection(CloseBtn.MouseButton1Up, function()
+        MainWindow.Visible = false
+        UIHidden = true
+        OrionLib:MakeNotification({
+            Name = "Interface Hidden",
+            Content = "Tap RightShift to reopen the interface",
+            Time = 5
+        })
+        WindowConfig.CloseCallback()
+    end)
 
     AddConnection(UserInputService.InputBegan, function(Input)
         if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
@@ -201,15 +263,25 @@ end)
         end
     end)
 
+    AddConnection(MinimizeBtn.MouseButton1Up, function()
+        if Minimized then
+            TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+            MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
+        else
+            TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
+            MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
+        end
+        Minimized = not Minimized
+    end)
+
     local TabFunction = {}
     function TabFunction:MakeTab(TabConfig)
         TabConfig = TabConfig or {}
         TabConfig.Name = TabConfig.Name or "Tab"
         TabConfig.Icon = TabConfig.Icon or ""
-        TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
 
         local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-            Size = UDim2.new(0, 100, 1, 0), -- Adjusted size for top bar tabs
+            Size = UDim2.new(0, 100, 1, 0),
             Parent = TabHolder
         }), {
             AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
@@ -276,9 +348,6 @@ end)
 
         return {}
     end
-
-    return TabFunction
-end
 
 
 local function Create(Name, Properties, Children)
@@ -696,36 +765,36 @@ function OrionLib:MakeWindow(WindowConfig)
 		Position = UDim2.new(0, 0, 1, -1)
 	}), "Stroke")
 
-	local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-		Parent = Orion,
-		Position = UDim2.new(0.5, -307, 0.5, -172),
-		Size = UDim2.new(0, 615, 0, 344),
-		ClipsDescendants = true
-	}), {
-		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
-		--	AnchorPoint = Vector2.new(0.5, 0.5),
-		--	Position = UDim2.new(0.5, 0, 0.5, 0),
-		--	Size = UDim2.new(1, 80, 1, 320),
-		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
-		--	ImageTransparency = 0.7
-		--}),
-		SetChildren(SetProps(MakeElement("TFrame"), {
-			Size = UDim2.new(1, 0, 0, 50),
-			Name = "TopBar"
-		}), {
-			WindowName,
-			WindowTopBarLine,
-			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
-				Size = UDim2.new(0, 70, 0, 30),
-				Position = UDim2.new(1, -90, 0, 10)
-			}),
-				CloseBtn,
-				MinimizeBtn
-			}), "Second"), 
-		}),
-		DragPoint,
-		WindowStuff
-	}), "Main")
+    local MainWindow = AddThemeObject(
+        SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+            Parent = Orion,
+            Position = UDim2.new(0.5, -307, 0.5, -172),
+            Size = UDim2.new(0, 615, 0, 344),
+            ClipsDescendants = true
+        }), {
+            SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                Position = UDim2.new(0.5, 0, 0.5, 0),
+                Size = UDim2.new(1, 80, 1, 320),
+                ImageColor3 = Color3.fromRGB(33, 33, 33),
+                ImageTransparency = 0.7
+            }),
+            SetChildren(SetProps(MakeElement("TFrame"), {
+                Size = UDim2.new(1, 0, 0, 50),
+                Name = "TopBar"
+            }), {
+                WindowName,
+                WindowTopBarLine,
+                AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+                    Size = UDim2.new(0, 70, 0, 30),
+                    Position = UDim2.new(1, -90, 0, 10)
+                }),
+                    -- Corrected line: CloseBtn and MinimizeBtn are now inside a table
+                    { CloseBtn, MinimizeBtn }
+                ), "Second"),
+            }),
+        })
+    )
 
 	if WindowConfig.ShowIcon then
 		WindowName.Position = UDim2.new(0, 50, 0, -24)
