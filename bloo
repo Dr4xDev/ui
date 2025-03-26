@@ -511,15 +511,20 @@ local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame",
 	})
 }), "Main")
 
--- TabHolder for Tabs
+-- Modify the TabHolder to use horizontal alignment
 local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
-	Size = UDim2.new(1, -100, 1, 0), -- Tabs take up most of the TopBar, leaving space for buttons
-	Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left of the TopBar
-	BackgroundTransparency = 1, -- Transparent background for a cleaner look
-	ScrollBarThickness = 0 -- Hide the scrollbar
+    Size = UDim2.new(1, -100, 1, 0), -- Tabs take up most of the TopBar, leaving space for buttons
+    Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left of the TopBar
+    BackgroundTransparency = 1, -- Transparent background for a cleaner look
+    ScrollBarThickness = 0 -- Hide the scrollbar
 }), {
-	MakeElement("List"), -- Use a UIListLayout for tab alignment
-	MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
+    SetProps(MakeElement("List"), {
+        FillDirection = Enum.FillDirection.Horizontal, -- Set to horizontal alignment
+        HorizontalAlignment = Enum.HorizontalAlignment.Left, -- Align tabs to the left
+        SortOrder = Enum.SortOrder.LayoutOrder, -- Maintain layout order
+        Padding = UDim.new(0, 8) -- Add spacing between tabs
+    }),
+    MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
 }), "Divider")
 
 -- Set the TabHolder's Parent to the TopBar
