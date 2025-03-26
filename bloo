@@ -556,6 +556,9 @@ TabHolder.Parent = MainWindow.TopBar
 		}), "Text")
 	})
 
+    CloseBtn.Parent = MainWindow.TopBar
+MinimizeBtn.Parent = MainWindow.TopBar
+
 	local DragPoint = SetProps(MakeElement("TFrame"), {
 		Size = UDim2.new(1, 0, 0, 50)
 	})
@@ -636,25 +639,37 @@ TabHolder.Parent = MainWindow.TopBar
 		TabConfig.Icon = TabConfig.Icon or ""
 		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
 
-		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-			Size = UDim2.new(1, 0, 0, 30),
-			Parent = TabHolder
-		}), {
-			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Size = UDim2.new(0, 18, 0, 18),
-				Position = UDim2.new(0, 10, 0.5, 0),
-				ImageTransparency = 0.4,
-				Name = "Ico"
-			}), "Text"),
-			AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
-				Size = UDim2.new(1, -35, 1, 0),
-				Position = UDim2.new(0, 35, 0, 0),
-				Font = Enum.Font.GothamSemibold,
-				TextTransparency = 0.4,
-				Name = "Title"
-			}), "Text")
-		})
+        local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
+            Size = UDim2.new(0, 100, 0, 30), -- Adjusted size for smaller buttons
+            Parent = TabHolder,
+            BackgroundTransparency = 1 -- Ensure the button background is transparent
+        }), {
+            AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0, 18, 0, 18), -- Icon size
+                Position = UDim2.new(0, 10, 0.5, 0), -- Icon position
+                ImageTransparency = 0.4,
+                Name = "Ico"
+            }), "Text"),
+            AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
+                Size = UDim2.new(1, -35, 1, 0), -- Adjusted label size
+                Position = UDim2.new(0, 35, 0, 0), -- Adjusted label position
+                Font = Enum.Font.GothamSemibold,
+                TextTransparency = 0.4,
+                Name = "Title"
+            }), "Text")
+        })
+        
+        local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
+            Size = UDim2.new(1, -150, 1, -50),
+            Position = UDim2.new(0, 150, 0, 50),
+            Parent = MainWindow,
+            Visible = false,
+            Name = "ItemContainer"
+        }), {
+            MakeElement("List", 0, 6),
+            MakeElement("Padding", 15, 10, 10, 15)
+        }), "Divider")
 
 		if GetIcon(TabConfig.Icon) ~= nil then
 			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
