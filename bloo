@@ -491,15 +491,35 @@ function OrionLib:MakeWindow(WindowConfig)
 		end	
 	end
 
+-- Define MainWindow before using it
+local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+	Parent = Orion,
+	Position = UDim2.new(0.5, -307, 0.5, -172),
+	Size = UDim2.new(0, 615, 0, 344),
+	ClipsDescendants = true
+}), {
+	SetChildren(SetProps(MakeElement("TFrame"), {
+		Size = UDim2.new(1, 0, 0, 50),
+		Name = "TopBar"
+	}), {
+		AddThemeObject(SetProps(MakeElement("Label", "Window Name", 15), {
+			Size = UDim2.new(1, -12, 1, 0),
+			Position = UDim2.new(0, 12, 0, 0),
+			Font = Enum.Font.GothamBold,
+			Name = "WindowName"
+		}), "Text")
+	})
+}), "Main")
+
 -- TabHolder for Tabs
 local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
-    Size = UDim2.new(1, -100, 1, 0), -- Tabs take up most of the TopBar, leaving space for buttons
-    Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left of the TopBar
-    BackgroundTransparency = 1, -- Transparent background for a cleaner look
-    ScrollBarThickness = 0 -- Hide the scrollbar
+	Size = UDim2.new(1, -100, 1, 0), -- Tabs take up most of the TopBar, leaving space for buttons
+	Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left of the TopBar
+	BackgroundTransparency = 1, -- Transparent background for a cleaner look
+	ScrollBarThickness = 0 -- Hide the scrollbar
 }), {
-    MakeElement("List"), -- Use a UIListLayout for tab alignment
-    MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
+	MakeElement("List"), -- Use a UIListLayout for tab alignment
+	MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
 }), "Divider")
 
 -- Set the TabHolder's Parent to the TopBar
@@ -535,52 +555,6 @@ TabHolder.Parent = MainWindow.TopBar
 		Size = UDim2.new(1, 0, 0, 50)
 	})
 
-
-
-    local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-		Parent = Orion,
-		Position = UDim2.new(0.5, -307, 0.5, -172),
-		Size = UDim2.new(0, 615, 0, 344),
-		ClipsDescendants = true
-	}), {
-		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
-		--	AnchorPoint = Vector2.new(0.5, 0.5),
-		--	Position = UDim2.new(0.5, 0, 0.5, 0),
-		--	Size = UDim2.new(1, 80, 1, 320),
-		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
-		--	ImageTransparency = 0.7
-		--}),
-		SetChildren(SetProps(MakeElement("TFrame"), {
-			Size = UDim2.new(1, 0, 0, 50),
-			Name = "TopBar"
-		}), {
-			WindowName,
-			WindowTopBarLine,
-			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
-				Size = UDim2.new(0, 70, 0, 30),
-				Position = UDim2.new(1, -90, 0, 10)
-			}), {
-				AddThemeObject(MakeElement("Stroke"), "Stroke"),
-				AddThemeObject(SetProps(MakeElement("Frame"), {
-					Size = UDim2.new(0, 1, 1, 0),
-					Position = UDim2.new(0.5, 0, 0, 0)
-				}), "Stroke"), 
-				CloseBtn,
-				MinimizeBtn
-			}), "Second"), 
-		}),
-		DragPoint,
-		WindowStuff
-	}), "Main")
-
-	if WindowConfig.ShowIcon then
-		WindowName.Position = UDim2.new(0, 50, 0, -24)
-		local WindowIcon = SetProps(MakeElement("Image", WindowConfig.Icon), {
-			Size = UDim2.new(0, 20, 0, 20),
-			Position = UDim2.new(0, 25, 0, 15)
-		})
-		WindowIcon.Parent = MainWindow.TopBar
-	end	
 
 
 
