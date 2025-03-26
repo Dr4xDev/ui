@@ -150,19 +150,17 @@ local function MakeElement(ElementName, ...)
 end
 
 local function SetProps(Element, Props)
-    if Props then -- Check if Props is not nil
-    for Property, Value in pairs(Props) do
-        Element[Property] = Value
-    end
-    return Element
+	table.foreach(Props, function(Property, Value)
+		Element[Property] = Value
+	end)
+	return Element
 end
-end 
 
 local function SetChildren(Element, Children)
-    for _, Child in pairs(Children) do
-        Child.Parent = Element
-    end
-    return Element
+	table.foreach(Children, function(_, Child)
+		Child.Parent = Element
+	end)
+	return Element
 end
 
 local function Round(Number, Factor)
@@ -500,10 +498,17 @@ local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame",
 	Size = UDim2.new(0, 615, 0, 344),
 	ClipsDescendants = true
 }), {
-	SetChildren(SetProps(MakeElement("TFrame")), {
+	SetChildren(SetProps(MakeElement("TFrame"), {
 		Size = UDim2.new(1, 0, 0, 50),
 		Name = "TopBar"
-	}),
+	}), {
+		AddThemeObject(SetProps(MakeElement("Label", "Window Name", 15), {
+			Size = UDim2.new(1, -12, 1, 0),
+			Position = UDim2.new(0, 12, 0, 0),
+			Font = Enum.Font.GothamBold,
+			Name = "WindowName"
+		}), "Text")
+	})
 }), "Main")
 
 -- TabHolder for Tabs
