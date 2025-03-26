@@ -633,38 +633,7 @@ MinimizeBtn.Parent = MainWindow.TopBar
 	end	
 
 	local TabFunction = {}
-	function TabFunction:MakeTab(TabConfig)
-        TabConfig = TabConfig or {}
-        TabConfig.Name = TabConfig.Name or "Tab"
-        TabConfig.Icon = TabConfig.Icon or ""
-        TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
-    
-        -- Create the Tab Button
-        local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-            Size = UDim2.new(0, 100, 0, 30), -- Adjusted size for smaller buttons
-            Parent = TabHolder,
-            BackgroundTransparency = 0, -- Ensure the button background is visible
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Set to white
-        }), {
-            AddThemeObject(MakeElement("Stroke", Color3.fromRGB(60, 60, 60), 1), "Stroke"), -- Add UIStroke with a gray color
-            AddThemeObject(MakeElement("Corner", 0, 6), "Main"), -- Add UICorner with a corner radius of 6
-            AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
-                AnchorPoint = Vector2.new(0, 0.5),
-                Size = UDim2.new(0, 18, 0, 18), -- Icon size
-                Position = UDim2.new(0, 10, 0.5, 0), -- Icon position
-                ImageTransparency = 0.4,
-                Name = "Ico"
-            }), "Text"),
-            AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
-                Size = UDim2.new(1, -35, 1, 0), -- Adjusted label size
-                Position = UDim2.new(0, 35, 0, 0), -- Adjusted label position
-                Font = Enum.Font.GothamSemibold,
-                TextTransparency = 0.4,
-                Name = "Title"
-            }), "Text")
-        })
-    
-        -- Create the Tab Content Container
+	
         local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
             Size = UDim2.new(1, -150, 1, -50),
             Position = UDim2.new(0, 150, 0, 50),
@@ -675,36 +644,53 @@ MinimizeBtn.Parent = MainWindow.TopBar
             MakeElement("List", 0, 6),
             MakeElement("Padding", 15, 10, 10, 15)
         }), "Divider")
-    
-        -- Handle Tab Selection
-        AddConnection(TabFrame.MouseButton1Click, function()
-            for _, Tab in next, TabHolder:GetChildren() do
-                if Tab:IsA("TextButton") then
-                    Tab.Title.Font = Enum.Font.GothamSemibold
-                    TweenService:Create(Tab.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0.4}):Play()
-                    TweenService:Create(Tab.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
-                end
-            end
-            for _, ItemContainer in next, MainWindow:GetChildren() do
-                if ItemContainer.Name == "ItemContainer" then
-                    ItemContainer.Visible = false
-                end
-            end
-            TweenService:Create(TabFrame.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
-            TweenService:Create(TabFrame.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
-            TabFrame.Title.Font = Enum.Font.GothamBlack
-            Container.Visible = true
-        end)
-    
-        -- Return the container for adding elements
-        return {
-            Container = Container,
-            AddElement = function(Element)
-                Element.Parent = Container
-            end
-        }
-    end
-       
+
+		if GetIcon(TabConfig.Icon) ~= nil then
+			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
+		end	
+
+		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
+			Size = UDim2.new(1, -150, 1, -50),
+			Position = UDim2.new(0, 150, 0, 50),
+			Parent = MainWindow,
+			Visible = false,
+			Name = "ItemContainer"
+		}), {
+			MakeElement("List", 0, 6),
+			MakeElement("Padding", 15, 10, 10, 15)
+		}), "Divider")
+
+		AddConnection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+			Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y + 30)
+		end)
+
+		if FirstTab then
+			FirstTab = false
+			TabFrame.Ico.ImageTransparency = 0
+			TabFrame.Title.TextTransparency = 0
+			TabFrame.Title.Font = Enum.Font.GothamBlack
+			Container.Visible = true
+		end    
+
+		AddConnection(TabFrame.MouseButton1Click, function()
+			for _, Tab in next, TabHolder:GetChildren() do
+				if Tab:IsA("TextButton") then
+					Tab.Title.Font = Enum.Font.GothamSemibold
+					TweenService:Create(Tab.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0.4}):Play()
+					TweenService:Create(Tab.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
+				end    
+			end
+			for _, ItemContainer in next, MainWindow:GetChildren() do
+				if ItemContainer.Name == "ItemContainer" then
+					ItemContainer.Visible = false
+				end    
+			end  
+			TweenService:Create(TabFrame.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
+			TweenService:Create(TabFrame.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+			TabFrame.Title.Font = Enum.Font.GothamBlack
+			Container.Visible = true   
+		end)
+
 		local function GetElements(ItemParent)
 			local ElementFunction = {}
 			function ElementFunction:AddLabel(Text)
