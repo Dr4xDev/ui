@@ -498,17 +498,10 @@ local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame",
 	Size = UDim2.new(0, 615, 0, 344),
 	ClipsDescendants = true
 }), {
-	SetChildren(SetProps(MakeElement("TFrame"), {
+	SetChildren(SetProps(MakeElement("TFrame")), {
 		Size = UDim2.new(1, 0, 0, 50),
 		Name = "TopBar"
-	}), {
-		AddThemeObject(SetProps(MakeElement("Label", "Window Name", 15), {
-			Size = UDim2.new(1, -12, 1, 0),
-			Position = UDim2.new(0, 12, 0, 0),
-			Font = Enum.Font.GothamBold,
-			Name = "WindowName"
-		}), "Text")
-	})
+	}),
 }), "Main")
 
 -- TabHolder for Tabs
