@@ -490,16 +490,20 @@ function OrionLib:MakeWindow(WindowConfig)
 			makefolder(WindowConfig.ConfigFolder)
 		end	
 	end
-    
-    local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
-        Size = UDim2.new(1, 0, 1, -50),
-        Position = UDim2.new(0, 0, 0, 50),
-        Parent = MainWindow
-    }), {
-        MakeElement("List"),
-        MakeElement("Padding", 8, 0, 0, 8)
-    }), "Divider")
 
+-- TabHolder for Tabs
+local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
+    Size = UDim2.new(1, -100, 1, 0), -- Tabs take up most of the TopBar, leaving space for buttons
+    Position = UDim2.new(0, 0, 0, 0), -- Positioned at the top left of the TopBar
+    BackgroundTransparency = 1, -- Transparent background for a cleaner look
+    ScrollBarThickness = 0 -- Hide the scrollbar
+}), {
+    MakeElement("List"), -- Use a UIListLayout for tab alignment
+    MakeElement("Padding", 8, 8, 8, 8) -- Add padding for spacing
+}), "Divider")
+
+-- Set the TabHolder's Parent to the TopBar
+TabHolder.Parent = MainWindow.TopBar
 
 	AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 		TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y + 16)
