@@ -536,6 +536,51 @@ function OrionLib:MakeWindow(WindowConfig)
 	}), "Text")
 
 
+    local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+		Parent = Orion,
+		Position = UDim2.new(0.5, -307, 0.5, -172),
+		Size = UDim2.new(0, 615, 0, 344),
+		ClipsDescendants = true
+	}), {
+		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
+		--	AnchorPoint = Vector2.new(0.5, 0.5),
+		--	Position = UDim2.new(0.5, 0, 0.5, 0),
+		--	Size = UDim2.new(1, 80, 1, 320),
+		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
+		--	ImageTransparency = 0.7
+		--}),
+		SetChildren(SetProps(MakeElement("TFrame"), {
+			Size = UDim2.new(1, 0, 0, 50),
+			Name = "TopBar"
+		}), {
+			WindowName,
+			WindowTopBarLine,
+			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+				Size = UDim2.new(0, 70, 0, 30),
+				Position = UDim2.new(1, -90, 0, 10)
+			}), {
+				AddThemeObject(MakeElement("Stroke"), "Stroke"),
+				AddThemeObject(SetProps(MakeElement("Frame"), {
+					Size = UDim2.new(0, 1, 1, 0),
+					Position = UDim2.new(0.5, 0, 0, 0)
+				}), "Stroke"), 
+				CloseBtn,
+				MinimizeBtn
+			}), "Second"), 
+		}),
+		DragPoint,
+		WindowStuff
+	}), "Main")
+
+	if WindowConfig.ShowIcon then
+		WindowName.Position = UDim2.new(0, 50, 0, -24)
+		local WindowIcon = SetProps(MakeElement("Image", WindowConfig.Icon), {
+			Size = UDim2.new(0, 20, 0, 20),
+			Position = UDim2.new(0, 25, 0, 15)
+		})
+		WindowIcon.Parent = MainWindow.TopBar
+	end	
+
 
 
 
